@@ -24,6 +24,20 @@ class DayTwo:
         }
         return outcomes[f"{op} {me}"]
 
+    def my_shape(self, op_shape, outcome_code):
+        my_shapes = {
+            'A X': 'S',
+            'A Y': 'R',
+            'A Z': 'P',
+            'B X': 'R',
+            'B Y': 'P',
+            'B Z': 'S',
+            'C X': 'P',
+            'C Y': 'S',
+            'C Z': 'R',
+        }
+        return my_shapes[f"{op_shape} {outcome_code}"]
+
     def part1(self):
         """ What would your total score be if everything goes
             exactly according to your strategy guide?
@@ -35,8 +49,20 @@ class DayTwo:
             score += shape_pts[me] + outcome_pts[self.outcome(op, me)]
         print(f"score is {score}")
 
+    def part2(self):
+        """ Following the Elf's instructions for the second column, what would your
+            total score be if everything goes exactly according to your strategy guide?
+        """
+        oc_map = {'X': 'loss', 'Y': 'draw', 'Z': 'win'}
+        shape_pts = {'R': 1, 'P': 2, 'S': 3}
+        outcome_pts = {'loss': 0, 'draw': 3, 'win': 6}
+        score = 0
+        for op, oc in self.guide:
+            score += shape_pts[self.my_shape(op, oc)] + outcome_pts[oc_map[oc]]
+        print(f"score is {score}")
+
 
 # day2 = DayTwo("sample_input.txt")
 day2 = DayTwo("input.txt")
-# print(day2.guide)
 day2.part1()
+day2.part2()
