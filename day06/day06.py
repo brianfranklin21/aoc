@@ -11,12 +11,10 @@ class DaySix:
                 line = line.strip()
                 self.data.append(line)
 
-    def find_marker(self, s):
-        i = 4
-        while len(set(s[i-4:i])) < 4:
-            # print(i, s[i-4:i], "fail")
+    def find_marker(self, s, w):
+        i = w
+        while len(set(s[i-w:i])) < w:
             i += 1
-        # print(i, s[i-4:i], "pass")
         return i
 
     def part1(self):
@@ -24,12 +22,14 @@ class DaySix:
             start-of-packet marker is detected?
         """
         for stream in self.data:
-            print(self.find_marker(stream))
+            print(self.find_marker(stream, 4))
 
     def part2(self):
+        """ 14 distinct characters. How many characters need to be processed
+            before the first start-of-packet marker is detected?
         """
-        """
-        print()
+        for stream in self.data:
+            print(self.find_marker(stream, 14))
 
 
 # day6 = DaySix("sample.txt")
