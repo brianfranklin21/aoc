@@ -36,7 +36,16 @@ class DayFive:
             for _ in range(box_qty):
                 self.data[to_stack] = self.data[from_stack][0] + self.data[to_stack]
                 self.data[from_stack] = self.data[from_stack][1:]
-                self.print_stacks()
+                # self.print_stacks()
+        self.print_stacks()
+
+    def run2(self):
+        self.print_stacks()
+        for box_qty, from_stack, to_stack in self.procedure:
+            self.data[to_stack] = self.data[from_stack][0:box_qty] + self.data[to_stack]
+            self.data[from_stack] = self.data[from_stack][box_qty:]
+            # self.print_stacks()
+        self.print_stacks()
 
     def part1(self):
         """ After the rearrangement procedure completes, what crate ends up on top of each stack?
@@ -45,9 +54,12 @@ class DayFive:
         print(self.top)
 
     def part2(self):
+        """ Pick up and move multiple crates at once.
+            After the rearrangement procedure completes, what crate ends up on top of each stack?
         """
-        """
-        print()
+        self.data = {int(row[-1]): "".join(row[0:-1]).strip() for row in zip(*self.stacks)}
+        self.run2()
+        print(self.top)
 
 
 # day5 = DayFive("sample.txt")
