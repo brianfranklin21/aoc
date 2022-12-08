@@ -58,9 +58,16 @@ class DaySeven:
         print(sum([f.size for f in self.folders.values() if f.size <= 100000]))
 
     def part2(self):
+        """ Find the smallest directory that, if deleted, would free up enough space on
+            the filesystem to run the update. What is the total size of that directory?
         """
-        """
-        print()
+        free_space = 70000000 - self.folders["/"].size
+        need_to_delete = 30000000 - free_space
+        deletion_options = [f.size for f in self.folders.values() if f.size >= need_to_delete]
+        print("free space =", free_space)
+        print("need to delete =", need_to_delete)
+        print("deletion options =", deletion_options)
+        print(min(deletion_options))
 
 
 # day7 = DaySeven("sample.txt")
