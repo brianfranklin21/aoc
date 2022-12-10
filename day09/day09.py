@@ -28,9 +28,9 @@ class KnottedRope():
 
     def _update_knots(self) -> None:
         """ K H H H K
-            H ↖️ ↑ ↗ H
+            H ↖ ↑ ↗ H
             H ← K → H
-            H ↙️ ↓ ↘ H
+            H ↙ ↓ ↘ H
             K H H H K
         """
         move = {
