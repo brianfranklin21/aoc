@@ -3,11 +3,10 @@
 import parse
 
 
-class Rope:
+class KnottedRope():
 
-    def __init__(self) -> None:
-        self.head = (0, 0)  # row, col
-        self.tail = (0, 0)  # row, col
+    def __init__(self, knots) -> None:
+        self.knots = [(0, 0), ] * knots  # (row, col)
         self.tail_log = {(0, 0), }
 
     def move_head(self, d, s) -> None:
@@ -24,15 +23,15 @@ class Rope:
             'U': lambda x: (x[0] - 1, x[1]),
         }
         for _ in range(s):
-            self.head = move[d](self.head)
-            self._move_tail()
+            self.knots[0] = move[d](self.knots[0])
+            self._update_knots()
 
-    def _move_tail(self) -> None:
-        """   H H H
+    def _update_knots(self) -> None:
+        """ K H H H K
             H ↖️ ↑ ↗ H
-            H ← T → H
+            H ← K → H
             H ↙️ ↓ ↘ H
-              H H H
+            K H H H K
         """
         move = {
             # head is R, L, D, or U
@@ -43,20 +42,27 @@ class Rope:
             # head is diagonal D R
             (1,   2): lambda x: (x[0] + 1, x[1] + 1),
             (2,   1): lambda x: (x[0] + 1, x[1] + 1),
+            (2,   2): lambda x: (x[0] + 1, x[1] + 1),
             # head is diagonal D L
             (1,  -2): lambda x: (x[0] + 1, x[1] - 1),
             (2,  -1): lambda x: (x[0] + 1, x[1] - 1),
+            (2,  -2): lambda x: (x[0] + 1, x[1] - 1),
             # head is diagonal U R
             (-1,  2): lambda x: (x[0] - 1, x[1] + 1),
             (-2,  1): lambda x: (x[0] - 1, x[1] + 1),
+            (-2,  2): lambda x: (x[0] - 1, x[1] + 1),
             # head is diagonal U L
             (-1, -2): lambda x: (x[0] - 1, x[1] - 1),
             (-2, -1): lambda x: (x[0] - 1, x[1] - 1),
+            (-2, -2): lambda x: (x[0] - 1, x[1] - 1),
         }
-        delta = tuple([self.head[0] - self.tail[0], self.head[1] - self.tail[1]])
-        if 2 in delta or -2 in delta:
-            self.tail = move[delta](self.tail)
-            self.tail_log.add(self.tail)
+        for i, knot in enumerate(self.knots):
+            if i == 0:
+                continue
+            delta = tuple([self.knots[i-1][0] - knot[0], self.knots[i-1][1] - knot[1]])
+            if 2 in delta or -2 in delta:
+                self.knots[i] = move[delta](knot)
+        self.tail_log.add(self.knots[-1])
 
 
 class DayNine:
@@ -68,18 +74,23 @@ class DayNine:
     def part1(self):
         """ How many positions does the tail of the rope visit at least once?
         """
-        r = Rope()
+        r = KnottedRope(2)
         for direction, steps in self.data:
             r.move_head(direction, steps)
         print(len(r.tail_log))
 
     def part2(self):
+        """ Simulate your complete series of motions on a larger rope with ten knots.
+            How many positions does the tail of the rope visit at least once?
         """
-        """
-        print()
+        r = KnottedRope(10)
+        for direction, steps in self.data:
+            r.move_head(direction, steps)
+        print(len(r.tail_log))
 
 
 # day9 = DayNine("sample.txt")
+# day9 = DayNine("sample2.txt")
 day9 = DayNine("input.txt")
 day9.part1()
 day9.part2()
