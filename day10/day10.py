@@ -6,14 +6,21 @@ class Processor:
 
     def __init__(self) -> None:
         self.reg_x = [1, ]
+        self.sprite = [0, 1, 2, ]
+        self.crt = []
 
     def run(self, command) -> int:
-        prev = 1 if self.reg_x == [] else self.reg_x[-1]
         if command[0] == "noop":
-            self.reg_x.append(prev)
+            self.crt.append("#" if len(self.reg_x) in self.sprite else " ")
+            self.reg_x.append(self.reg_x[-1])
         if command[0] == "addx":
-            self.reg_x.append(prev)
-            self.reg_x.append(prev + int(command[1]))
+            self.crt.append("#" if len(self.reg_x) in self.sprite else " ")
+            self.reg_x.append(self.reg_x[-1])
+            # second cycle:
+            self.crt.append("#" if len(self.reg_x) in self.sprite else " ")
+            self.reg_x.append(self.reg_x[-1] + int(command[1]))
+            sprite_mid = self.reg_x[-1] + 1 + 40 * (len(self.reg_x) // 40)
+            self.sprite = [sprite_mid - 1, sprite_mid, sprite_mid + 1]
 
 
 class DayTen:
@@ -36,9 +43,13 @@ class DayTen:
         print(signal_strength)
 
     def part2(self):
+        """ Render the image given by your program. What eight capital letters appear on your CRT?
         """
-        """
-        print()
+        cpu = Processor()
+        for command in self.data:
+            cpu.run(command)
+        for i in range(0, 201, 40):
+            print("".join(cpu.crt[i:40 + i]))
 
 
 # day10 = DayTen("sample.txt")
