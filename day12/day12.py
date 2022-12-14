@@ -30,6 +30,14 @@ class Grid():
         self.start = self._get_point_where("S")
         self.end = self._get_point_where("E")
 
+    def all_lowest_elevation_points(self) -> set[Point]:
+        all_points = [Point(x, y) for x in range(self.x_size) for y in range(self.y_size)]
+        low_points = {
+            point for point in all_points
+            if self.array[point.y][point.x] == "a" or self.array[point.y][point.x] == "S"
+        }
+        return low_points
+
     def _get_point_where(self, x: str) -> Point:
         """ Returns the point where "S" or "E" are located.
         """
@@ -63,7 +71,7 @@ class Grid():
                 yield neighbor
 
     def get_path(self, start: Point):
-        """ Given a start point, determine best path to reach the goal specified by 'E'.
+        """ Given a start point, determine best path to reach the end specified by 'E'.
             Returns a list of points that make up the path, or None if no valid path.
         """
         points_to_check: deque[Point] = deque()
@@ -82,6 +90,9 @@ class Grid():
                 if neighbor not in came_from:
                     points_to_check.append(neighbor)
                     came_from[neighbor] = point
+
+        if point != self.end:
+            return None
 
         # build path by retracing the breadcrumbs
         point = self.end
@@ -106,7 +117,7 @@ class DayTwelve:
         """
         with open(input_fname, 'r') as _file:
             self.data = _file.read().splitlines()
-            # self.data = [list(line.strip()) for line in _file]
+
         self.grid = Grid(self.data)
 
     def part1(self):
@@ -114,13 +125,20 @@ class DayTwelve:
             to the location that should get the best signal?
         """
         path = self.grid.get_path(self.grid.start)
-        p1_length = len(path)
-        print(f"Part 1: {p1_length}")
+        self.p1_length = len(path)
+        print(f"Part 1: {self.p1_length}")
 
     def part2(self):
+        """ What is the fewest steps required to move starting from any square
+            with elevation a to the location that should get the best signal?
         """
-        """
-        print()
+        start_points = self.grid.all_lowest_elevation_points()
+        self.p2_length = self.p1_length
+        for start in start_points:
+            path = self.grid.get_path(start)
+            if path:
+                self.p2_length = min(self.p2_length, len(path))
+        print(f"Part 2: {self.p2_length}")
 
 
 # day12 = DayTwelve("sample.txt")
