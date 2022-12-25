@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 from ast import literal_eval
+from functools import cmp_to_key
+from math import prod
 
 
 class DayThirteen:
@@ -14,37 +16,44 @@ class DayThirteen:
             self.data = [tuple(map(literal_eval, pair)) for pair in data_gen]
             # print(self.data)
 
-    def is_correct_order(self, L: int | list, R: int | list) -> int:
-        """Return 1 if l & r are in the correct order, 0 if tie, -1 if not."""
+    def compare(self, L: int | list, R: int | list) -> int:
+        """Comparison Function. Return -1 for less-than, 0 for equal, or 1 for greater-than"""
         match L, R:
             case int(), int():
-                return (L < R) - (R < L)
+                return (L > R) - (L < R)
 
             case int(), list():
-                return self.is_correct_order([L], R)
+                return self.compare([L], R)
 
             case list(), int():
-                return self.is_correct_order(L, [R])
+                return self.compare(L, [R])
 
             case list(), list():
                 # Note: map stops when the shortest argument iterable is exhausted.
-                for x in map(self.is_correct_order, L, R):
+                for x in map(self.compare, L, R):
                     if x:
                         return x
                 # Still a tie so final comparison is made by length.
-                return self.is_correct_order(len(L), len(R))
+                return self.compare(len(L), len(R))
 
             case _:
                 raise ValueError
 
     def part1(self) -> None:
         """Solve the puzzle for part 1."""
-        ans = sum(i for i, p in enumerate(self.data, start=1) if self.is_correct_order(*p) > 0)
+        ans = sum(i for i, p in enumerate(self.data, start=1) if self.compare(*p) < 0)
         print(f"Part 1: {ans}")
 
     def part2(self) -> None:
         """Solve the puzzle for part 2."""
-        print(f"Part 2: {0}")
+        packets = [[[2]], [[6]]]
+        for L, R in self.data:
+            packets.append(L)
+            packets.append(R)
+
+        packets = sorted(packets, key=cmp_to_key(self.compare))
+        ans = prod(i for i, p in enumerate(packets, start=1) if p in ([[2]], [[6]]))
+        print(f"Part 2: {ans}")
 
 
 # day13 = DayThirteen("sample.txt")
