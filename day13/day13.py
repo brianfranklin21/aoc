@@ -1,6 +1,7 @@
 """https://adventofcode.com/2022/day/13"""
 
 from __future__ import annotations
+
 from ast import literal_eval
 from functools import cmp_to_key
 from math import prod

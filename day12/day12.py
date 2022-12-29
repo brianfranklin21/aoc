@@ -1,9 +1,10 @@
 """https://adventofcode.com/2022/day/12"""
 
 from __future__ import annotations
-from dataclasses import dataclass
+
 from collections import deque
 from collections.abc import Iterator
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
