@@ -113,12 +113,48 @@ class Cave:
         # We should never get here, but mypy complains without this return statement.
         return -1
 
+    def count_sand_until_blocked(self) -> int:
+        """Count how many sand blocks come to rest before the starting point is blocked.
+
+        :return int: Number of sand blocks that come to rest.
+        """
+        sand_start = Point(500, 0)
+        bottom = max(block.y for block in self.blocks) + 2
+        self.add_rock_line(Point(0, bottom), Point(1000, bottom))
+        # For each new block of sand (counting up indefinitely)...
+        for i in itertools.count(start=1):
+            cur_pos = sand_start
+            # Let the sand block fall until it can't anymore, then exit the while loop.
+            while True:
+                # Try the three possible next moves in their order of priority.
+                next_y = cur_pos.y + 1
+                for next_x in (cur_pos.x, cur_pos.x - 1, cur_pos.x + 1):
+                    if (
+                        Block(next_x, next_y, ROCK) not in self.blocks
+                        and Block(next_x, next_y, SAND) not in self.blocks
+                    ):
+                        # The sand block can move so move it and exit the for loop.
+                        cur_pos = Point(next_x, next_y)
+                        break
+                # This for loop’s else clause only runs when exhausted, i.e. no breaks occurred.
+                else:
+                    # The sand block can't move so it has come to rest.
+                    # Add it to the cave's set of blocks and exit the while loop.
+                    self.blocks.add(Block(cur_pos.x, cur_pos.y, SAND))
+                    break
+            # If the sand block came to rest at the sand_start position, then we're done.
+            if cur_pos == sand_start:
+                return i
+        # We should never get here, but mypy complains without this return statement.
+        return -1
+
     def plot(self) -> None:
         """Plot the cave blocks as a 2D text grid."""
-        xs = [block.x for block in self.blocks]
         ys = [block.y for block in self.blocks]
-        for y in range(min(ys), max(ys) + 1):
-            print(f"{y} ", end="")
+        # Exclude bottom row when collecting x coordinates to plot.
+        xs = [block.x for block in self.blocks if block.y < max(ys)]
+        for y in range(0, max(ys) + 1):
+            print(f"{y:2d} ", end="")
             for x in range(min(xs), max(xs) + 1):
                 if Block(x, y, ROCK) in self.blocks:
                     print(ROCK, end="")
@@ -144,14 +180,19 @@ class Day14:
         """
         with open(filename, "r", encoding="utf-8") as f:
             self.data = [[Point(*map(int, p.split(","))) for p in line.split(" -> ")] for line in f]
+        self.init_cave()
+        self.solve_part1()
+        self.init_cave()
+        self.solve_part2()
+
+    def init_cave(self) -> None:
+        """Initialize the cave and fill it with rocks per the input file."""
         self.cave = Cave()
         for path in self.data:
             for i, point in enumerate(path):
                 if i == 0:
                     continue
                 self.cave.add_rock_line(path[i - 1], point)
-        self.solve_part1()
-        self.solve_part2()
 
     def __str__(self) -> str:
         """Return the puzzle answers.
@@ -166,12 +207,12 @@ class Day14:
 
     def solve_part2(self) -> None:
         """Solve the puzzle for part 2."""
-        self.part2 = 0
+        self.part2 = self.cave.count_sand_until_blocked()
 
 
 test = Day14("sample.txt")
 test.cave.plot()
 assert test.part1 == 24, f"Expected 24, got {test.part1}"
-assert test.part2 == 0, f"Expected 0, got {test.part2}"
+assert test.part2 == 93, f"Expected 93, got {test.part2}"
 
 print(Day14("input.txt"))
