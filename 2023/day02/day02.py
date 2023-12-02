@@ -36,15 +36,15 @@ class Day02:
 
     def solve_part2(self) -> None:
         """Solve the puzzle for part 2."""
-        result = {}
-        for game_id, line in self.data.items():
+        power = []
+        for line in self.data.values():
             g_min = {"red": 0, "green": 0, "blue": 0}
             for reveal in line.split("; "):
                 for cube in reveal.split(", "):
                     num, color = cube.split()
                     g_min[color] = max(g_min[color], int(num))
-            result[game_id] = prod(g_min.values())
-        self.part2 = sum(result.values())
+            power.append(prod(g_min.values()))
+        self.part2 = sum(power)
 
     def __str__(self) -> str:
         """Return the puzzle answers as a string."""
