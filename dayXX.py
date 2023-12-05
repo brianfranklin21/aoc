@@ -3,7 +3,6 @@
 https://adventofcode.com/2023/day/XX
 Author: Brian Franklin
 """
-import re
 
 
 class DayXX:
@@ -20,36 +19,15 @@ class DayXX:
 
     def solve_part1(self) -> None:
         """Solve the puzzle for part 1."""
-        cal_data1 = []
-        for line in self.data:
-            if match := re.findall(r"\d", line):
-                first_digit = match[0]
-                last_digit = match[-1]
-                cal_value = int("".join([first_digit, last_digit]))
-                cal_data1.append(cal_value)
-        # print(cal_data1)
-        self.part1 = sum(cal_data1)
+        res = [0]
+        # print(res)
+        self.part1 = sum(res)
 
     def solve_part2(self) -> None:
         """Solve the puzzle for part 2."""
-        cal_data2 = []
-        for line in self.data:
-            line = line.replace("one", "one1one")
-            line = line.replace("two", "two2two")
-            line = line.replace("three", "three3three")
-            line = line.replace("four", "four4four")
-            line = line.replace("five", "five5five")
-            line = line.replace("six", "six6six")
-            line = line.replace("seven", "seven7seven")
-            line = line.replace("eight", "eight8eight")
-            line = line.replace("nine", "nine9nine")
-            if match := re.findall(r"\d", line):
-                first_digit = match[0]
-                last_digit = match[-1]
-                cal_value = int("".join([first_digit, last_digit]))
-                cal_data2.append(cal_value)
-        # print(cal_data2)
-        self.part2 = sum(cal_data2)
+        res2 = [0]
+        # print(res2)
+        self.part2 = sum(res2)
 
     def __str__(self) -> str:
         """Return the puzzle answers as a string."""
@@ -58,9 +36,9 @@ class DayXX:
 
 Test = DayXX("sample.txt")
 assert Test.part1 == 0, f"Expected 0, got {Test.part1}"
-assert Test.part2 == 0, f"Expected 0, got {Test.part2}"
+# assert Test.part2 == 0, f"Expected 0, got {Test.part2}"
 
-Puzzle = DayXX("input.txt")
-print(Puzzle)
+# Puzzle = DayXX("input.txt")
+# print(Puzzle)
 # assert Puzzle.part1 == 0, f"Expected 0, got {Puzzle.part1}"
 # assert Puzzle.part2 == 0, f"Expected 0, got {Puzzle.part2}"
