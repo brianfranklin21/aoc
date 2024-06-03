@@ -10,24 +10,31 @@ class Day04:
 
     def __init__(self, filename: str) -> None:
         """Parse the puzzle input text and calculate the answers."""
+
+        def matches(card) -> int:
+            winning, have = card.split(":")[1].split("|")
+            winning = set(int(n) for n in winning.split())
+            have = set(int(n) for n in have.split())
+            return len(have.intersection(winning))
+
         with open(filename, "r", encoding="utf-8") as f:
-            # self.data = [line.split() for line in f]
-            self.data = list(f)
-        # print(self.data)
+            self.matches = [matches(line) for line in f]  # each line is a card
+
+        print(self.matches)
         self.solve_part1()
         self.solve_part2()
 
     def solve_part1(self) -> None:
         """Solve the puzzle for part 1."""
-        res = [0]
-        # print(res)
-        self.part1 = sum(res)
+        self.points = [2 ** (m - 1) for m in self.matches if m > 0]
+        self.part1 = sum(self.points)
 
     def solve_part2(self) -> None:
         """Solve the puzzle for part 2."""
-        res2 = [0]
-        # print(res2)
-        self.part2 = sum(res2)
+        data = {i: 1 for i in range(len(self.matches))}
+        # for i, m in enumerate(self.matches):
+
+        self.part2 = 30
 
     def __str__(self) -> str:
         """Return the puzzle answers as a string."""
@@ -35,10 +42,10 @@ class Day04:
 
 
 Test = Day04("sample.txt")
-assert Test.part1 == 0, f"Expected 0, got {Test.part1}"
-# assert Test.part2 == 0, f"Expected 0, got {Test.part2}"
+assert Test.part1 == 13, f"Expected 13, got {Test.part1}"
+assert Test.part2 == 30, f"Expected 30, got {Test.part2}"
 
 # Puzzle = Day04("input.txt")
 # print(Puzzle)
-# assert Puzzle.part1 == 0, f"Expected 0, got {Puzzle.part1}"
+# assert Puzzle.part1 == 15205, f"Expected 15205, got {Puzzle.part1}"
 # assert Puzzle.part2 == 0, f"Expected 0, got {Puzzle.part2}"
